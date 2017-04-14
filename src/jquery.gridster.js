@@ -3125,6 +3125,68 @@
         return this;
     };
 
+    fn.resize_widget_dimensions_timeout_id = null;
+    
+    /**
+     * Resize widget base dimension after init gridster
+     *
+     * @method resize_widget_dimensions
+     * @param {Object} options contain: widget_base_dimensions, widget_margins, max_cols.
+     */
+
+    fn.resize_widget_dimensions = function(options) {
+        if (options.widget_margins) {
+            this.options.widget_margins = options.widget_margins;
+        }
+        if (options.widget_base_dimensions) {
+            this.options.widget_base_dimensions = options.widget_base_dimensions;
+        }
+        if (options.max_cols) {
+            this.options.max_cols = options.max_cols;
+            this.cols = this.options.max_cols;
+        }
+        this.wrapper_width = this.$wrapper.width();
+        this.min_widget_width = (this.options.widget_margins[0] * 2) + this.options.widget_base_dimensions[0];
+        this.min_widget_height = (this.options.widget_margins[1] * 2) + this.options.widget_base_dimensions[1];
+
+        this.drag_api.options.offset_left = this.options.widget_margins[0];
+        this.drag_api.options.offset_top = this.options.widget_margins[1];
+        this.drag_api.options.container_width = this.cols * this.min_widget_width;
+
+        this.min_widget_width = (this.options.widget_margins[0] * 2) + this.options.widget_base_dimensions[0];
+        this.min_widget_height = (this.options.widget_margins[1] * 2) + this.options.widget_base_dimensions[1];
+        var serializedGrid = this.serialize();
+        this.generate_grid_and_stylesheet();
+        this.get_widgets_from_DOM();
+        this.set_dom_grid_height();
+        this.set_dom_grid_width();
+        (function(fn, widgets) {
+            if (fn.resize_widget_dimensions_timeout_id){
+                clearTimeout(fn.resize_widget_dimensions_timeout_id);
+            }
+            fn.resize_widget_dimensions_timeout_id = setTimeout(function() {
+                fn.update_widget_coords_data(widgets);
+            }, 500);
+        })(this, this.$widgets);
+        return false;
+    };
+
+    /**
+     * update widget coords data (when resize, change position of widget)
+     *
+     * @method update_widget_coords_data
+     * @param {Object} list $widgets
+     */
+    fn.update_widget_coords_data = function(widgets) {
+        var widgets = widgets || [];
+        for (var i = 0; i < widgets.length; i++) {
+            var $widget = $(widgets[i]);
+            var coords = $widget ? $widget.data('coords') : null;
+            if (coords) {
+                coords.set();
+            }
+        }
+    };
 
     //jQuery adapter
     $.fn.gridster = function(options) {
