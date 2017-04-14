@@ -48,3 +48,15 @@ Distributed under the MIT license.
 
 Gridster is built by [Ducksboard](http://ducksboard.com/) with the help of all
 these [wonderful people](https://github.com/ducksboard/gridster.js/graphs/contributors).
+
+## Dynamic resize widget_base_dimension, widget_margin, max_cols
+
+Add function to dynamic change gridster option: widget_base_dimension, widget_margin, max_cols
+
+Example: 
+
+	gridster.resize_widget_dimensions({
+		widget_margin: [marginX, marginY],
+        widget_base_dimensions: [widthUnit, heightUnit],
+        max_cols: numCols
+    });
